@@ -5,6 +5,7 @@ from PyQt5.QtSql import *
 import time
 
 import sys
+import os
 
 import UI_view_saraa
 import DB_manager
@@ -16,16 +17,36 @@ class MainDialog(QDialog, UI_view_saraa.Ui_Dialog):
         super(MainDialog, self).__init__(parent)
         self.setupUi(self)
 
-        #self.insertPilotBtn.clicked.connect(self.insertPilot)
-#TODO:QMessageBox.information(self,"done")
+        #create model with db table name "pilot_try"
+        self.model = QSqlTableModel(self)
+        self.model.setTable("pilot_try")
+        self.model.select()
+        #populate pilot1InsertCombo with model
+        self.pilot1InsertCombo.setModel(self.model)
+       
+
+    #     self.insertPilotBtn.clicked.connect(self.insertPilot)
+    # def insertPilot(self):
+    #     print("WORKS")
+
+
+    @pyqtSlot()
+    # 2 methodes deja presentes dans UI_view mais autrement necessaire pour decorateur
+    # self.insertPilotBtn.setObjectName("imprimer")
+    # QMetaObject.connectSlotsByName(self)
+    #!!!! LE NOM DE LA METHODE INDIQUE CE QUI LA DECLENCHE !!!!!
+    def on_insertPilotBtn_clicked(self):
+            print("WORKS AS WELL")
+
+
+
 
     # def initializeModel(model):
     #     model.setTable("pilots1")
     #     model.setEd
     #
     #
-    # def insertPilot(self):
-    #     print("WORKS")
+
     #
     # def createDB(self):
     #     db = QSqlDatabase.addDatabase('QSQLITE')
@@ -55,6 +76,13 @@ class MainDialog(QDialog, UI_view_saraa.Ui_Dialog):
 if __name__ == '__main__':
     try:
         app = QApplication(sys.argv)
+
+        #importing and setting table
+        db = QSqlDatabase.addDatabase("QSQLITE")
+        db.setDatabaseName("moiseLite.db")
+        if not db.open():
+            print("Error opening DB")
+
         #create and display splash screen
 
         splash_pix = QPixmap('Logo_armee.png')
@@ -68,7 +96,7 @@ if __name__ == '__main__':
         progressBar.setGeometry(0, splash_pix.height() - 50, splash_pix.width(), 20)
 
         splash.show()
-        splash.showMessage("<h1><font color='black'>Bienvenue dans Moise!</font></h1>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
+        splash.showMessage("<h1><font color='black'>----Bienvenue dans Moise!----</font></h1>", Qt.AlignTop | Qt.AlignCenter, Qt.black)
 
         for i in range(1, 11):
             progressBar.setValue(i)
@@ -76,7 +104,7 @@ if __name__ == '__main__':
             while time.time() < t + 0.1:
                 app.processEvents()
         #simulating
-        time.sleep(2)
+        time.sleep(1)
 
 
 
